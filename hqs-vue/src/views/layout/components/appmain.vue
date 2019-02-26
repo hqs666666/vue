@@ -14,7 +14,7 @@ export default {
     name: "appmain",
     data() {
         return {
-            breadcrumbs: null
+            breadcrumbs: null,
         }
     },
     watch: {
@@ -37,10 +37,12 @@ export default {
 <style scoped>
 .content {
     padding: 80px 15px 15px 215px;
-    min-height: 1280px;
     background: #fff;
+    width: 100%;
+    height: auto;
 }
-.bread{
+
+.bread {
     padding: 0 0 15px 0;
 }
 </style>

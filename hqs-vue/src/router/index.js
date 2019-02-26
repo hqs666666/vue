@@ -44,6 +44,11 @@ export default new Router({
           component: () => import("@/views/log/fail"),
         }
       ]
+    },
+    {
+      path: '/login',
+      name: '登录',
+      component: () => import("@/views/home/login")
     }
   ]
 })
