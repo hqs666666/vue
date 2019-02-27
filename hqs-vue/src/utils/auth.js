@@ -1,15 +1,18 @@
-import Cookies from 'js-cookie'
+import cookies from 'js-cookie'
+import {decrypt,encrypt} from '@/utils/secret'
 
-const TokenKey = 'oauth-Token'
+const tokenKey = 'oauth-Token'
 
 export function getToken() {
-  return Cookies.get(TokenKey)
+  var token = cookies.get(tokenKey);
+  return token === undefined ? token : decrypt(token);
 }
 
 export function setToken(token) {
-  return Cookies.set(TokenKey, token)
+  var encryptToken = encrypt(token);
+  return cookies.set(tokenKey, encryptToken)
 }
 
 export function removeToken() {
-  return Cookies.remove(TokenKey)
+  return cookies.remove(tokenKey)
 }

@@ -1,14 +1,15 @@
 import axios from 'axios'
 import store from '@/store'
 import { getToken } from './auth'
+import { apiSetting } from '@/config'
 
 const service = axios.create({
-    baseURL:"http://localhost:5001/api",
-    timeout:30000
+    baseURL: apiSetting.baseUrl,
+    timeout: apiSetting.timeout
 })
 
 //不拦截的页面
-const paths = ''
+const paths = apiSetting.notFilterPaths;
 
 //request 拦截器
 service.interceptors.request.use(
@@ -17,7 +18,7 @@ service.interceptors.request.use(
             let originalRequest = config;
             if(store.getters.token){
                 if(new Date(store.getters.expried) < new Date()){
-                    return store.dispatch("Refresh",{ token: store.getters.refreshToken })
+                    return store.dispatch("Refresh",{ token: store.getters.user.refreshToken })
                     .then(() => {
                         originalRequest.headers.common['Authorization'] = "Bearer " + getToken();
                         return originalRequest;

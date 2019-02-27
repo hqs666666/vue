@@ -1,14 +1,12 @@
 import router from '@/router'
-import {
-  getToken
-} from './auth'
+import { getToken } from './auth'
 import store from '@/store'
 
 const whiteList = ['/login']
-//路由跳转前
+// 路由跳转前
 router.beforeEach((to, from, next) => {
   if (getToken()) {
-    if (to.path === "/login") {
+    if (to.path === '/login') {
       next({
         path: '/'
       })
@@ -22,4 +20,4 @@ router.beforeEach((to, from, next) => {
       next('/login')
     }
   }
-});
+})

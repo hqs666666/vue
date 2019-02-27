@@ -23,7 +23,7 @@
                     <span>自动登录</span>
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" @click="handleSubmit('formInline')" long>Signin</Button>
+                    <Button type="primary" :loading="loading" @click="handleSubmit('formInline')" long>Signin</Button>
                 </FormItem>
             </Form>
         </div>
@@ -61,17 +61,21 @@ export default {
                         trigger: 'blur'
                     }
                 ]
-            }
+            },
+            loading: false
         }
     },
     methods: {
         handleSubmit(name) {
             this.$refs[name].validate((valid) => {
                 if (valid) {
+                     this.loading = true;
                      this.$store.dispatch("Login",this.formInline)
                      .then(rsp => {
+                         this.loading = false;
                          this.$router.push('/');
                      }).catch(err => {
+                         this.loading = false;
                          this.$Message.error('用户名或密码错误');
                      })
                 } else {

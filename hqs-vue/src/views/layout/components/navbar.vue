@@ -27,7 +27,7 @@ export default {
     name: "navbar",
     data(){
         return{
-            username:"黄青松"
+            username:this.$store.getters.user.name
         }
     },
     methods: {
@@ -37,6 +37,7 @@ export default {
         clickMenu:function(name){
             if(name === "exit"){
                 removeToken();
+                localStorage.removeItem('store');
                 this.$router.push('/login');
             }
         }
@@ -67,6 +68,6 @@ export default {
 }
 
 .name{
-    color: black;
+    color: white;
 }
 </style>
