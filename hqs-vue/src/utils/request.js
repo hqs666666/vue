@@ -21,12 +21,13 @@ service.interceptors.request.use(
                     return store.dispatch("Refresh",{ token: store.getters.user.refreshToken })
                     .then(() => {
                         originalRequest.headers.common['Authorization'] = "Bearer " + getToken();
-                        return originalRequest;
+                        console.log(originalRequest);
+                        return setHeaders(originalRequest);
                     }).catch(err => {
                         console.log(err);
                     })
                 }else{
-                    config.headers.common['Authorization'] = "Bearer " + getToken();
+                    setHeaders(config);
                 }
             }
             return config;
@@ -58,5 +59,23 @@ service.interceptors.response.use(
         }
     }
 )
+
+function setHeaders(config){
+    config.headers.common['Authorization'] = "Bearer " + getToken();
+    config.headers.common['X-Ca-Key'] = apiSetting.clientId;
+    config.headers.common['X-Ca-Nonce'] = generateNonce();
+    config.headers.common['X-Ca-Timestamp'] = new Date().getTime();
+    config.headers.common['X-Ca-Signature'] = generateSignature();
+    console.log(config);
+    return config;
+}
+
+function generateSignature(){
+    return "signature";
+}
+
+function generateNonce(){
+    return "nonce";
+}
 
 export default service;
