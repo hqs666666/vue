@@ -76,7 +76,7 @@ export default {
                          this.$router.push('/');
                      }).catch(err => {
                          this.loading = false;
-                         this.$Message.error('用户名或密码错误');
+                         this.$Message.error('err.Message');
                      })
                 } else {
                     this.$Message.error('Fail!');

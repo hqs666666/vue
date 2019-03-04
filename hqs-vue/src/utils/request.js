@@ -2,10 +2,11 @@ import axios from 'axios'
 import store from '@/store'
 import { getToken } from './auth'
 import { apiSetting } from '@/config'
+import { md5 } from '@/utils/secret'
 
 const service = axios.create({
     baseURL: apiSetting.baseUrl,
-    timeout: apiSetting.timeout
+    timeout: apiSetting.timeout,
 })
 
 //不拦截的页面
@@ -14,21 +15,10 @@ const paths = apiSetting.notFilterPaths;
 //request 拦截器
 service.interceptors.request.use(
     config => {
+        //setHeaders(config);
         if(paths.indexOf(config.url) < 0){ //需要拦截的页面
-            let originalRequest = config;
-            if(store.getters.token){
-                if(new Date(store.getters.expried) < new Date()){
-                    return store.dispatch("Refresh",{ token: store.getters.user.refreshToken })
-                    .then(() => {
-                        originalRequest.headers.common['Authorization'] = "Bearer " + getToken();
-                        console.log(originalRequest);
-                        return setHeaders(originalRequest);
-                    }).catch(err => {
-                        console.log(err);
-                    })
-                }else{
-                    setHeaders(config);
-                }
+            if(getToken()){
+                config.headers.common['Authorization'] = "Bearer " + getToken();
             }
             return config;
         }else{  //不需要拦截的页面
@@ -47,35 +37,58 @@ service.interceptors.response.use(
         if(response.status === 200){
             return data;
         }else{
-            return data.error;
+            return data;
         }
     },
     error => {
+        var data = error.data;
         if (error.response && error.response.status === 401) {
-            this.$Message.error("授权失败");
-            return;
+            return data;
         } else {
-            this.$Message.error(error.message)
+            return data;
         }
     }
 )
 
 function setHeaders(config){
-    config.headers.common['Authorization'] = "Bearer " + getToken();
-    config.headers.common['X-Ca-Key'] = apiSetting.clientId;
-    config.headers.common['X-Ca-Nonce'] = generateNonce();
-    config.headers.common['X-Ca-Timestamp'] = new Date().getTime();
-    config.headers.common['X-Ca-Signature'] = generateSignature();
-    console.log(config);
-    return config;
+    var nonce = generateNonce(45);
+    var stamp = new Date().getTime();
+    config.headers.common['key'] = apiSetting.clientId;
+    config.headers.common['nonce'] = nonce;
+    config.headers.common['timestamp'] = stamp;
+    config.headers.common['signature'] = generateSignature(apiSetting.clientId,nonce,stamp,config);
 }
 
-function generateSignature(){
-    return "signature";
+function generateSignature(key,nonce,stamp,config){
+    var data = eval(config.data);
+    data['key'] = key;
+    data['nonce'] = nonce;
+    data['timestamp'] = stamp;
+    
+    var json = objectSort(data);
+    var jsonStr = JSON.stringify(json);
+    var signature = md5(jsonStr).toUpperCase();
+    return signature;
 }
 
-function generateNonce(){
-    return "nonce";
+function generateNonce(length){
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$^&*";
+    for(var i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+}
+
+function objectSort(arys){
+    var newkey = Object.keys(arys).sort();
+    var newObj = {};
+    for(var i = 0; i < newkey.length; i++) {
+        //遍历newkey数组
+        newObj[newkey[i]] = arys[newkey[i]]; 
+        //向新创建的对象中按照排好的顺序依次增加键值对
+    }
+    return newObj;
 }
 
 export default service;

@@ -20,3 +20,7 @@ export function encrypt(word) {
     let encrypted = crypto.AES.encrypt(srcs, key, { iv: iv, mode: crypto.mode.CBC, padding: crypto.pad.Pkcs7 });
     return encrypted.ciphertext.toString().toUpperCase();
 } 
+
+export function md5(word){
+    return crypto.MD5(word).toString();
+}
