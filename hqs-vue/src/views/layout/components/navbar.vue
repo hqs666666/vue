@@ -15,7 +15,6 @@
                     </DropdownMenu>
                 </Dropdown>
             </div>
-
         </div>
     </Menu>
 </Header>
@@ -49,6 +48,7 @@ export default {
 .header {
     position: fixed;
     width: 100%;
+    z-index: 10000;
 }
 
 .layout-logo {

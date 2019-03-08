@@ -15,7 +15,7 @@ const paths = apiSetting.notFilterPaths;
 //request 拦截器
 service.interceptors.request.use(
     config => {
-        //setHeaders(config);
+        setHeaders(config);
         if(paths.indexOf(config.url) < 0){ //需要拦截的页面
             if(getToken()){
                 config.headers.common['Authorization'] = "Bearer " + getToken();
@@ -41,11 +41,10 @@ service.interceptors.response.use(
         }
     },
     error => {
-        var data = error.data;
         if (error.response && error.response.status === 401) {
-            return data;
+            return error.data;
         } else {
-            return data;
+            return error.data;
         }
     }
 )
@@ -53,18 +52,19 @@ service.interceptors.response.use(
 function setHeaders(config){
     var nonce = generateNonce(45);
     var stamp = new Date().getTime();
-    config.headers.common['key'] = apiSetting.clientId;
-    config.headers.common['nonce'] = nonce;
-    config.headers.common['timestamp'] = stamp;
-    config.headers.common['signature'] = generateSignature(apiSetting.clientId,nonce,stamp,config);
+    config.headers['X-Ca-Key'] = apiSetting.clientId;
+    config.headers['X-Ca-Nonce'] = nonce;
+    config.headers['X-Ca-Timestamp'] = stamp;
+    config.headers['X-Ca-Signature'] = generateSignature(config);
 }
 
-function generateSignature(key,nonce,stamp,config){
-    var data = eval(config.data);
-    data['key'] = key;
-    data['nonce'] = nonce;
-    data['timestamp'] = stamp;
-    
+function generateSignature(config){
+    var data = {};
+    if(config.method !== 'get'){
+        data = eval(config.data)
+    }else{
+        data = eval(config.params)
+    }
     var json = objectSort(data);
     var jsonStr = JSON.stringify(json);
     var signature = md5(jsonStr).toUpperCase();

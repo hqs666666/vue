@@ -13,7 +13,7 @@ const store = new Vuex.Store({
             id:"",
             expried:"",
             refreshToken:"",
-            nextRefreshMillisecond:1000 * 1000,
+            nextRefreshMillisecond:1000 * 60 * 19,
         }
     },
     getters:{   //获取state的值，不做修改操作
@@ -26,7 +26,7 @@ const store = new Vuex.Store({
             state.user = user;
             state.user.nextRefreshMillisecond = (user.expried.getTime() - new Date().getTime()) - 60 * 1000;
             if(state.user.nextRefreshMillisecond === undefined || state.user.nextRefreshMillisecond <= 0){
-                state.user.nextRefreshMillisecond = 1000 * 1000;
+                state.user.nextRefreshMillisecond = 1000 * 60 *19;
             }
         }
     },
@@ -34,12 +34,12 @@ const store = new Vuex.Store({
         Login({commit},userInfo){
             return new Promise((resolve,reject) => {
                 login(userInfo).then(response => {
-                    //解析token
-                    var Base64 = require("js-base64").Base64;
-                    var tokenArray = response.access_token.split('.');
-                    var decode = Base64.decode(tokenArray[1]);
-                    var json = JSON.parse(decode);
-                    
+                    if(response.hasOwnProperty("error")){
+                        resolve(response);
+                        return;
+                    }
+                    var json = getJson(response.access_token);
+
                     //获取过期时间
                     var exp = json.exp;
                     //转化为时间格式
@@ -56,11 +56,11 @@ const store = new Vuex.Store({
         Refresh({commit},userInfo){
             return new Promise((resolve,reject) => {
                 refreshToken(userInfo).then(response => {
-                    //解析token
-                    var Base64 = require("js-base64").Base64;
-                    var tokenArray = response.access_token.split('.');
-                    var decode = Base64.decode(tokenArray[1]);
-                    var json = JSON.parse(decode);
+                    if(response.hasOwnProperty("error")){
+                        resolve(response);
+                        return;
+                    }
+                    var json = getJson(response.access_token);
 
                     //获取过期时间
                     var exp = json.exp;
@@ -77,5 +77,13 @@ const store = new Vuex.Store({
         }
     }
 })
+
+function getJson(str) {
+    var Base64 = require("js-base64").Base64;
+    var tokenArray = str.split('.');
+    var decode = Base64.decode(tokenArray[1]);
+    var json = JSON.parse(decode);
+    return json;
+}
 
 export default store

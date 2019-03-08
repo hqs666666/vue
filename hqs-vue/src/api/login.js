@@ -15,3 +15,12 @@ export function refreshToken(loginForm){
         data: loginForm
       })
 }
+
+export function getLogs(params){
+  return request({
+    url: '/log',
+    method: 'get',
+    params
+  })
+}
+

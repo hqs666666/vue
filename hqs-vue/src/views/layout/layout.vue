@@ -3,6 +3,7 @@
         <navbar class="app-navbar"></navbar>
         <sidebar class="app-sidebar"></sidebar>
         <appmain class="app-appmain"></appmain>
+        <appfooter class="app-footer"></appfooter>
     </div>
 </template>
 
@@ -10,13 +11,15 @@
 import SideBar from "./components/sidebar.vue";
 import NarBar from "./components/navbar.vue";
 import AppMain from "./components/appmain.vue";
+import AppFooter from "./components/appfooter.vue";
 
 export default {
     name:"layout",
     components:{
         "sidebar":SideBar,
         "navbar":NarBar,
-        "appmain":AppMain
+        "appmain":AppMain,
+        "appfooter":AppFooter
     }
 }
 </script>
@@ -28,5 +31,6 @@ export default {
     position: relative;
     border-radius: 4px;
     overflow: hidden;
+    height: 100%;
 }
 </style>

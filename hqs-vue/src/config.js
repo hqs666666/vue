@@ -5,7 +5,7 @@ const apiSetting = {
     timeout: 30000,
     baseUrl: isRelease ? "http://www.hqs.pub/api" : "http://localhost:5001/api",
     notFilterPaths: [""],
-    clientId: isRelease ? "1" : "roclient",
+    clientId: isRelease ? "1" : "ro.client",
 }
 
 const secret = {

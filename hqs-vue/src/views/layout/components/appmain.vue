@@ -39,7 +39,8 @@ export default {
     padding: 80px 15px 15px 215px;
     background: #fff;
     width: 100%;
-    height: auto;
+    height: 100%;
+    overflow-y: scroll;
 }
 
 .bread {

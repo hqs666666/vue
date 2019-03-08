@@ -28,15 +28,23 @@ export default {
             }
         });
 
+        var that = this;
         //定时刷新token
         window.setInterval(function(){
-            this.$store.dispatch("Refresh", {token: this.$store.getters.user.refreshToken})
-            .catch((err) => {
-                console.log(err);
-                this.$Message.error('会话已过期，请重新登录');
-                this.$router.push('/login');
+            that.$store.dispatch("Refresh", {token: that.$store.getters.user.refreshToken})
+            .then(rep => {
+                if(rep.hasOwnProperty("error")){
+                    that.$Message.error(rep.error);
+                    alert(rep.error);
+                }
+            })
+            .catch(err => {
+                that.$Message.error('会话已过期，请重新登录');
+                alert('会话已过期，请重新登录');
+                that.$router.push('/login');
             });
-        },this.$store.getters.user.nextRefreshMillisecond);
+        },that.$store.getters.user.nextRefreshMillisecond);
     }
 }
 </script>
+

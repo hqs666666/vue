@@ -39,8 +39,6 @@ export default {
             formInline: {
                 username: '17602132272',
                 password: '123456',
-                verifycode: 1234,
-                code: 1234,
                 switch: true
             },
             ruleInline: {
@@ -76,7 +74,7 @@ export default {
                          this.$router.push('/');
                      }).catch(err => {
                          this.loading = false;
-                         this.$Message.error('err.Message');
+                         this.$Message.error(err.message);
                      })
                 } else {
                     this.$Message.error('Fail!');
