@@ -1,11 +1,11 @@
 
-const isRelease = false;
+const isRelease = !false;
 
 const apiSetting = {
     timeout: 30000,
-    baseUrl: isRelease ? "http://www.hqs.pub/api" : "http://localhost:5001/api",
+    baseUrl: isRelease ? "http://192.168.0.105:5001/api" : "http://localhost:5001/api",
     notFilterPaths: [""],
-    clientId: isRelease ? "1" : "ro.client",
+    clientId: isRelease ? "roclient" : "ro.client",
 }
 
 const secret = {
